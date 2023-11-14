@@ -1,120 +1,50 @@
 import {
-  AxesHelper,
-  BoxGeometry,
+  DoubleSide,
   Mesh,
-  MeshNormalMaterial,
-  PerspectiveCamera,
+  MeshBasicMaterial,
+  PlaneGeometry,
   Scene,
-  Vector3,
-  WebGLRenderer
+  ShaderMaterial,
+  Vector4
 } from 'three'
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-export default new (class ThreeSceneCreator {
-  public scene!: THREE.Scene
-  public camera!: THREE.PerspectiveCamera
-  private renderer!: THREE.WebGLRenderer
-  private controls!: OrbitControls
-  private sizes!: { width: number; height: number }
-  public container!: HTMLDivElement
+import fragment from './shader/fragment.glsl'
+import vertex from './shader/vertex.glsl'
 
-  constructor() {
-    this.sizes = {
-      width: window.innerWidth,
-      height: window.innerHeight
-    }
+export default class App {
+  private scene: Scene
+  private material!: ShaderMaterial
+  private material1!: MeshBasicMaterial
+  private geometry!: PlaneGeometry
+  private plane!: Mesh
+
+  constructor(scene: Scene) {
+    this.scene = scene
   }
 
-  /**
-   * 初始化场景
-   */
-  public init(container: HTMLDivElement) {
-    this.container = container
-
-    this.createScene()
-    this.createCamera()
-    this.createRenderer()
-    this.createControls()
-    this.tic()
-
-    window.addEventListener('resize', this.handleResize.bind(this))
+  public init() {
+    this.addObjects()
   }
 
-  /**
-   * 创建场景
-   */
-  private createScene() {
-    this.scene = new Scene()
-
-    const material = new MeshNormalMaterial()
-    const geometry = new BoxGeometry(1, 1, 1)
-
-    const mesh = new Mesh(geometry, material)
-    this.scene.add(mesh)
-
-    const axesHelper = new AxesHelper(3)
-    this.scene.add(axesHelper)
-  }
-
-  /**
-   * 创建相机
-   */
-  private createCamera() {
-    const fov = 60
-    const aspect = this.sizes.width / this.sizes.height
-    this.camera = new PerspectiveCamera(fov, aspect, 0.1)
-    this.camera.position.set(4, 4, 4)
-    this.camera.lookAt(new Vector3(0, 2.5, 0))
-  }
-
-  /**
-   * 创建渲染器
-   */
-  private createRenderer() {
-    const renderer = new WebGLRenderer({
-      antialias: window.devicePixelRatio < 2,
-      logarithmicDepthBuffer: true
+  private addObjects() {
+    this.material = new ShaderMaterial({
+      extensions: {
+        derivatives: '#extension GL_OES_standard_derivatives : enable'
+      },
+      side: DoubleSide,
+      uniforms: {
+        time: { value: 0 },
+        resolution: { value: new Vector4() }
+      },
+      vertexShader: vertex,
+      fragmentShader: fragment
     })
 
-    this.container.appendChild(renderer.domElement)
-    this.renderer = renderer
-    this.handleResize()
+    this.material1 = new MeshBasicMaterial({ color: 0xff0000 })
+
+    this.geometry = new PlaneGeometry(1, 1, 1, 1)
+
+    this.plane = new Mesh(this.geometry, this.material)
+    this.scene.add(this.plane)
   }
-
-  /**
-   * 创建控制器
-   */
-  private createControls() {
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-  }
-
-  /**
-   * 处理窗口大小变化
-   */
-  private handleResize() {
-    this.sizes.width = window.innerWidth
-    this.sizes.height = window.innerHeight
-
-    this.camera.aspect = this.sizes.width / this.sizes.height
-    this.camera.updateProjectionMatrix()
-
-    this.renderer.setSize(this.sizes.width, this.sizes.height)
-
-    const pixelRatio = Math.min(window.devicePixelRatio, 2)
-    this.renderer.setPixelRatio(pixelRatio)
-  }
-
-  /**
-   * 渲染
-   */
-  private tic() {
-    this.controls.update()
-
-    this.renderer.render(this.scene, this.camera)
-
-    requestAnimationFrame(() => {
-      this.tic()
-    })
-  }
-})()
+}
