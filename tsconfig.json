@@ -16,7 +16,10 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "types": []
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite-plugin-glsl/ext"]
   },
   "include": ["./src"]
 }

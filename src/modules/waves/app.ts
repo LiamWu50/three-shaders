@@ -1,3 +1,5 @@
+import * as dat from 'dat.gui'
+import gsap from 'gsap'
 import {
   DoubleSide,
   Mesh,
@@ -5,11 +7,14 @@ import {
   PlaneGeometry,
   Scene,
   ShaderMaterial,
+  TextureLoader,
   Vector4
 } from 'three'
 
-import fragment from './shader/fragment.glsl'
-import vertex from './shader/vertex.glsl'
+import brush from '@/assets/images/burash.png'
+
+import fragment from './shaders/fragment.glsl'
+import vertex from './shaders/vertex.glsl'
 
 export default class App {
   private scene: Scene
@@ -40,11 +45,15 @@ export default class App {
       fragmentShader: fragment
     })
 
-    this.material1 = new MeshBasicMaterial({ color: 0xff0000 })
+    this.material1 = new MeshBasicMaterial({
+      // color: 0xff0000,
+      map: new TextureLoader().load(brush),
+      transparent: true
+    })
 
     this.geometry = new PlaneGeometry(1, 1, 1, 1)
 
-    this.plane = new Mesh(this.geometry, this.material)
+    this.plane = new Mesh(this.geometry, this.material1)
     this.scene.add(this.plane)
   }
 }

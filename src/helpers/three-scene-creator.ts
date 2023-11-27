@@ -1,13 +1,4 @@
-import {
-  AxesHelper,
-  BoxGeometry,
-  Mesh,
-  MeshNormalMaterial,
-  PerspectiveCamera,
-  Scene,
-  Vector3,
-  WebGLRenderer
-} from 'three'
+import { PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
@@ -46,15 +37,6 @@ export default new (class ThreeSceneCreator {
    */
   private createScene() {
     this.scene = new Scene()
-
-    const material = new MeshNormalMaterial()
-    const geometry = new BoxGeometry(1, 1, 1)
-
-    const mesh = new Mesh(geometry, material)
-    this.scene.add(mesh)
-
-    const axesHelper = new AxesHelper(3)
-    this.scene.add(axesHelper)
   }
 
   /**
