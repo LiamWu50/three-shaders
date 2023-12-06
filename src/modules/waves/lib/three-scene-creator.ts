@@ -16,6 +16,7 @@ export default new (class ThreeSceneCreator {
    */
   public init(container: HTMLDivElement) {
     this.container = container
+    console.log('container.offsetWidth', container.offsetWidth)
 
     this.size = {
       width: container.offsetWidth,
@@ -46,7 +47,7 @@ export default new (class ThreeSceneCreator {
     const aspect = this.size.width / this.size.height
     this.camera = new OrthographicCamera(
       (frustumSize * aspect) / -2,
-      frustumSize * aspect,
+      (frustumSize * aspect) / 2,
       frustumSize / 2,
       frustumSize / -2,
       -1000,
@@ -59,11 +60,10 @@ export default new (class ThreeSceneCreator {
    * 创建渲染器
    */
   private createRenderer() {
-    const renderer = new WebGLRenderer({
-      // antialias: window.devicePixelRatio < 2,
-      // logarithmicDepthBuffer: true
-    })
+    const renderer = new WebGLRenderer()
 
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(this.size.width, this.size.height)
     renderer.setClearColor(0x000000, 1)
     renderer.outputColorSpace = SRGBColorSpace
 
@@ -83,16 +83,11 @@ export default new (class ThreeSceneCreator {
    * 处理窗口大小变化
    */
   private handleResize() {
-    this.size.width = window.innerWidth
-    this.size.height = window.innerHeight
+    this.size.width = this.container.offsetWidth
+    this.size.height = this.container.offsetHeight
 
-    // this.camera.aspect = this.size.width / this.size.height
     this.camera.updateProjectionMatrix()
-
     this.renderer.setSize(this.size.width, this.size.height)
-
-    const pixelRatio = Math.min(window.devicePixelRatio, 2)
-    this.renderer.setPixelRatio(pixelRatio)
   }
 
   /**
