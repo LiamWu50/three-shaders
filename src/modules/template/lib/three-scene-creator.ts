@@ -1,11 +1,11 @@
-import { OrthographicCamera, Scene, SRGBColorSpace, WebGLRenderer } from 'three'
+import { PerspectiveCamera, Scene, SRGBColorSpace, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import App from '../app'
 
 export default new (class ThreeSceneCreator {
   public scene!: Scene
-  public camera!: OrthographicCamera
+  public camera!: PerspectiveCamera
   public renderer!: WebGLRenderer
   private controls!: OrbitControls
   public size!: { width: number; height: number }
@@ -33,7 +33,7 @@ export default new (class ThreeSceneCreator {
 
     window.addEventListener('resize', this.handleResize.bind(this))
 
-    const app = new App(this.scene, this.camera, this.renderer, this.size)
+    const app = new App(this.scene, this.camera, this.renderer)
     app.init()
   }
 
@@ -48,17 +48,11 @@ export default new (class ThreeSceneCreator {
    * 创建相机
    */
   private createCamera() {
-    const frustumSize = this.size.height
+    const fov = 50
     const aspect = this.size.width / this.size.height
-    this.camera = new OrthographicCamera(
-      (frustumSize * aspect) / -2,
-      (frustumSize * aspect) / 2,
-      frustumSize / 2,
-      frustumSize / -2,
-      -1000,
-      1000
-    )
-    this.camera.position.set(0, 0, 2)
+    this.camera = new PerspectiveCamera(fov, aspect, 0.1, 1000)
+    this.camera.position.set(1, 2, 3)
+    this.camera.lookAt(0, 0, 0)
   }
 
   /**
@@ -100,6 +94,8 @@ export default new (class ThreeSceneCreator {
    */
   private tic() {
     this.controls.update()
+
+    this.renderer.render(this.scene, this.camera)
 
     requestAnimationFrame(() => {
       this.tic()
