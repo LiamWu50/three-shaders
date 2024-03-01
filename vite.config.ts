@@ -26,7 +26,7 @@ export default defineConfig(() => {
     server: {
       host: '0.0.0.0', // 主机名
       port: 5173, // 端口
-      open: false, // 自动打开浏览器
+      open: true, // 自动打开浏览器
       cors: true, // 跨域设置允许
       strictPort: false, // 如果端口已占用直接退出
       // 接口代理

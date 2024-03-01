@@ -5,7 +5,7 @@ import App from '../app'
 
 export default new (class ThreeSceneCreator {
   public scene!: Scene
-  public camera!: PerspectiveCamera
+  public camera!: OrthographicCamera
   public renderer!: WebGLRenderer
   private controls!: OrbitControls
   public size!: { width: number; height: number }
@@ -32,7 +32,7 @@ export default new (class ThreeSceneCreator {
 
     window.addEventListener('resize', this.handleResize.bind(this))
 
-    const app = new App(this.scene, this.camera, this.renderer)
+    const app = new App(this.scene, this.camera, this.renderer, this.size)
     app.init()
   }
 
@@ -47,23 +47,24 @@ export default new (class ThreeSceneCreator {
    * 创建相机
    */
   private createCamera() {
-    const fov = 50
+    const fov = 60
     const aspect = this.size.width / this.size.height
-    this.camera = new PerspectiveCamera(fov, aspect, 0.1, 1000)
-    this.camera.position.set(0, 0.0, 0.0)
-    this.camera.lookAt(0, 0, -100)
+    this.camera = new PerspectiveCamera(fov, aspect, 0.1)
+    this.camera.position.set(0, 0, 2)
   }
 
   /**
    * 创建渲染器
    */
   private createRenderer() {
-    const renderer = new WebGLRenderer({ antialias: true })
+    const renderer = new WebGLRenderer({
+      antialias: true // 开启抗锯齿
+    })
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setSize(this.size.width, this.size.height)
-    renderer.setClearColor(0x000000, 1)
-    // renderer.outputColorSpace = SRGBColorSpace
+    renderer.setClearColor(0xe3fcf4, 1)
+    renderer.outputColorSpace = SRGBColorSpace
 
     this.container.appendChild(renderer.domElement)
     this.renderer = renderer
@@ -74,7 +75,7 @@ export default new (class ThreeSceneCreator {
    * 创建控制器
    */
   private createControls() {
-    // this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
   }
 
   /**
@@ -92,8 +93,7 @@ export default new (class ThreeSceneCreator {
    * 渲染
    */
   private tic() {
-    // this.controls.update()
-
+    this.controls.update()
     this.renderer.render(this.scene, this.camera)
 
     requestAnimationFrame(() => {

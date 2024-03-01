@@ -1,6 +1,6 @@
 import './styles/index.css'
 
-import ThreeSceneCreator from './modules/2dsdf/lib/three-scene-creator'
+import ThreeSceneCreator from './modules/started/lib/three-scene-creator'
 
 const initScene = () => {
   const container = document.getElementById('container')

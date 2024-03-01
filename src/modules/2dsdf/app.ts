@@ -46,7 +46,7 @@ export default class App {
       const mesh = new Mesh(this.geometry, material)
 
       this.scene.add(mesh)
-      mesh.position.z = -i * 0.1
+      mesh.position.z = -i * 0.2
       this.materials.push(material)
       this.meshes.push(mesh)
     }
@@ -59,7 +59,7 @@ export default class App {
       vertexShader: vertex,
       fragmentShader: fragment,
       uniforms: {
-        time: { value: 0 },
+        time: { value: 0.0 },
         level: { value: level }
       }
     })
@@ -69,12 +69,13 @@ export default class App {
    * 渲染
    */
   private tic(playhead: number) {
+    this.camera.position.z = -playhead * 6
     this.materials.forEach((material, index) => {
       material.uniforms.time.value += playhead * Math.PI * 2
     })
 
     requestAnimationFrame(() => {
-      this.tic(playhead)
+      this.tic(playhead + 0.001)
     })
   }
 }
