@@ -2,8 +2,10 @@ import {
   BoxGeometry,
   Mesh,
   OrthographicCamera,
+  PlaneGeometry,
   Scene,
   ShaderMaterial,
+  SphereGeometry,
   WebGLRenderer
 } from 'three'
 
@@ -51,9 +53,9 @@ export default class App {
         uTime: { value: 0 }
       }
     })
-    const plane = new BoxGeometry(1, 1, 1)
-    // const plane = new PlaneGeometry(1, 1, 1)
-    const mesh = new Mesh(plane, this.material)
+    const geometry = new PlaneGeometry(1, 1, 1)
+    // const geometry = new SphereGeometry(0.5)
+    const mesh = new Mesh(geometry, this.material)
     this.scene.add(mesh)
   }
 
