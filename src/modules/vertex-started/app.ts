@@ -1,38 +1,18 @@
-import {
-  BoxGeometry,
-  Mesh,
-  OrthographicCamera,
-  Scene,
-  ShaderMaterial,
-  WebGLRenderer
-} from 'three'
+import { Clock, Mesh, Scene, ShaderMaterial, SphereGeometry } from 'three'
 
 import fragment from './shaders/fragment.glsl'
 import vertex from './shaders/vertex.glsl'
 
-type Size = {
-  width: number
-  height: number
-}
-
 export default class App {
   private scene: Scene
-  private camera: OrthographicCamera
-  private renderer: WebGLRenderer
-  private size: Size
+  private clock: Clock
+  private mesh!: Mesh
   private material!: ShaderMaterial
   private time = 0
 
-  constructor(
-    scene: Scene,
-    camera: OrthographicCamera,
-    renderer: WebGLRenderer,
-    size: Size
-  ) {
+  constructor(scene: Scene) {
     this.scene = scene
-    this.camera = camera
-    this.renderer = renderer
-    this.size = size
+    this.clock = new Clock()
   }
 
   public init() {
@@ -47,22 +27,23 @@ export default class App {
     this.material = new ShaderMaterial({
       vertexShader: vertex,
       fragmentShader: fragment,
+      // wireframe: true,
       uniforms: {
         uTime: { value: 0 }
       }
     })
-    const plane = new BoxGeometry(1, 1, 1)
-    // const plane = new PlaneGeometry(1, 1, 1)
-    const mesh = new Mesh(plane, this.material)
-    this.scene.add(mesh)
+    const geometry = new SphereGeometry(1, 256, 256)
+    this.mesh = new Mesh(geometry, this.material)
+    this.scene.add(this.mesh)
   }
 
   /**
    * 渲染
    */
   private tic() {
-    this.time += 0.01
+    this.time = this.clock.getElapsedTime()
     this.material.uniforms.uTime.value = this.time
+    this.mesh.rotation.y = this.time
 
     requestAnimationFrame(() => {
       this.tic()

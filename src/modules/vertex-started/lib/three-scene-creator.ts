@@ -5,7 +5,7 @@ import App from '../app'
 
 export default new (class ThreeSceneCreator {
   public scene!: Scene
-  public camera!: OrthographicCamera
+  public camera!: PerspectiveCamera
   public renderer!: WebGLRenderer
   private controls!: OrbitControls
   public size!: { width: number; height: number }
@@ -32,7 +32,7 @@ export default new (class ThreeSceneCreator {
 
     window.addEventListener('resize', this.handleResize.bind(this))
 
-    const app = new App(this.scene, this.camera, this.renderer, this.size)
+    const app = new App(this.scene)
     app.init()
   }
 
@@ -50,7 +50,7 @@ export default new (class ThreeSceneCreator {
     const fov = 60
     const aspect = this.size.width / this.size.height
     this.camera = new PerspectiveCamera(fov, aspect, 0.1)
-    this.camera.position.set(0, 0, 2)
+    this.camera.position.set(0, 0, 5)
   }
 
   /**
