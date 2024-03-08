@@ -85,11 +85,9 @@ float random(vec3 pos){
 
 void main() {
   vec3 newPos = position;
-  // newPos += uStrength * normal * cnoise(position * uFrequency + uTime);
 
   float noise = cnoise(position * uFrequency + uTime);
-  noise = step(0.0, noise);
-  newPos += normal * noise * 0.0;
+  newPos += normal * noise * 1.0;
   vNoise = noise;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);

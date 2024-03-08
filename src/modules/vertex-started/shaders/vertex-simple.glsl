@@ -1,9 +1,5 @@
 uniform float uTime; 
-uniform float uStrength;
-uniform float uFrequency;
-
 varying vec3 vNormal;
-varying float vNoise;
 
 // Classic Perlin 3D Noise 
 // by Stefan Gustavson
@@ -84,13 +80,15 @@ float random(vec3 pos){
 }
 
 void main() {
-  vec3 newPos = position;
-  // newPos += uStrength * normal * cnoise(position * uFrequency + uTime);
+  // vec3 newPos = position;
+  // newPos.y += sin(position.y);
+  // newPos.y += sin(position.y * (sin(uTime) + 1.0) * 5.0);
+  // newPos.y += sin(position.y * 1.0 + uTime * 2.0);
+  // newPos.x += 0.8 * sin(position.z * 0.5 + uTime * 1.0);
 
-  float noise = cnoise(position * uFrequency + uTime);
-  noise = step(0.0, noise);
-  newPos += normal * noise * 0.0;
-  vNoise = noise;
+  // noise噪声函数
+  vec3 newPos = position;
+  newPos += normal * cnoise(position * (sin(uTime * 0.1) + 1.0) * 10.0);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
 

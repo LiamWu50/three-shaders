@@ -31,7 +31,7 @@ export default class App {
     this.material = new ShaderMaterial({
       vertexShader: vertex,
       fragmentShader: fragment,
-      // wireframe: true,
+      wireframe: true,
       uniforms: {
         uTime: { value: 0 },
         uStrength: { value: 0.5 },
