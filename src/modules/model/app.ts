@@ -1,10 +1,11 @@
-import { Box3, PerspectiveCamera, Scene, Vector3 } from 'three'
+import { AnimationMixer, Box3, PerspectiveCamera, Scene, Vector3 } from 'three'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 export default class App {
   private scene: Scene
   private camera: PerspectiveCamera
+  private mixer: AnimationMixer | null = null
 
   constructor(scene: Scene, camera: PerspectiveCamera) {
     this.scene = scene
@@ -13,6 +14,7 @@ export default class App {
 
   public init() {
     this.addObjects()
+    this.tic()
   }
 
   private addObjects() {
@@ -22,22 +24,32 @@ export default class App {
     dracoLoader.setDecoderPath('./draco/')
     loader.setDRACOLoader(dracoLoader)
 
-    loader.load('/model/GR-09.glb', (gltf) => {
+    loader.load('/model/wtex.glb', (gltf: GLTF) => {
       this.scene.add(gltf.scene)
+      gltf.scene.position.z = -14
+      gltf.scene.position.y = -14
+
       this.autofitCamera(gltf)
 
-      const mesh2 = gltf.scene.getObjectByName('部件2')
-      mesh2?.traverse(function (child: any) {
+      gltf.scene.traverse((child: any) => {
         if (child.isMesh) {
-          child.material.color.set('#ff7979')
+          const materials = Array.isArray(child.material)
+            ? child.material
+            : [child.material]
+          materials.forEach(function (material: any) {
+            material.depthWrite = true
+          })
         }
       })
 
-      const mesh1 = gltf.scene.getObjectByName('部件1')
-      mesh1?.traverse(function (child: any) {
-        if (child.isMesh) {
-          child.material.color.set('#686de0')
-        }
+      const eyeObject = gltf.scene.getObjectByName('Eye')
+      console.log('eyeObject', eyeObject)
+
+      // 获取动画mixer并启动动画
+      this.mixer = new AnimationMixer(gltf.scene)
+      gltf.animations.forEach((clip) => {
+        const action = this.mixer?.clipAction(clip)
+        action?.play()
       })
     })
   }
@@ -54,5 +66,17 @@ export default class App {
     box.getSize(boxSize)
     const maxSize = Math.max(boxSize.x, boxSize.y, boxSize.z)
     this.camera.position.set(0, 0, maxSize * 1)
+  }
+
+  /**
+   * 渲染
+   */
+  private tic() {
+    if (this.mixer) {
+      this.mixer.update(0.01)
+    }
+    requestAnimationFrame(() => {
+      this.tic()
+    })
   }
 }

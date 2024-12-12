@@ -2,6 +2,7 @@ import {
   ACESFilmicToneMapping,
   Color,
   EquirectangularReflectionMapping,
+  Fog,
   PerspectiveCamera,
   Scene,
   SRGBColorSpace,
@@ -53,6 +54,7 @@ export default new (class ThreeSceneCreator {
     scene.background = new Color(0xf3f3f3)
     scene.environment = new RGBELoader().load('/image/ambientlight.hdr')
     scene.environment.mapping = EquirectangularReflectionMapping
+    scene.fog = new Fog('#f00', 0.1, 1000)
     this.scene = scene
   }
 
@@ -62,7 +64,7 @@ export default new (class ThreeSceneCreator {
   private createCamera() {
     const fov = 45
     const aspect = this.size.width / this.size.height
-    this.camera = new PerspectiveCamera(fov, aspect, 0.1, 1000)
+    this.camera = new PerspectiveCamera(fov, aspect, 0.01, 100)
   }
 
   /**
